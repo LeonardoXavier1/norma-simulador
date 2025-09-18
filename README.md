@@ -13,20 +13,21 @@ O simulador permite:
 ---
 
 ## Funcionalidades
-1. **Registradores Dinâmicos**: usuário define quantos registradores, nomes e valores iniciais.
+1. **Registradores Dinâmicos**: usuário define quantos registradores, nomes e valores iniciais.  
 2. **Instruções suportadas**:
    - `zero_x`: verifica se o registrador x é zero.
    - `add_x`: incrementa o registrador x em 1.
    - `sub_x`: decrementa o registrador x em 1.
-   - `vá_para <linha>`: muda o fluxo de execução.
+   - `vá_para <linha>`: muda o fluxo de execução.  
 3. **Macros Implementadas**:
    - `macro_mul x y z`: multiplicação de dois números inteiros.
    - `macro_div x y z`: divisão de dois números inteiros (trata divisão por zero).
-   - `macro_primo x y`: identifica se um número é primo.
-4. **Entrada**: arquivo de texto com o programa (`programa.txt`).
+   - `macro_primo x y`: identifica se um número é primo.  
+4. **Entrada**: arquivo de texto com o programa (`programa.txt`).  
 
-Exemplo de programa:
+Exemplo de programa (`programa.txt`):
 
+```text
 1: se zero_b então vá_para 5 senão vá_para 2
 2: faça add_a vá_para 3
 3: faça add_a vá_para 4
