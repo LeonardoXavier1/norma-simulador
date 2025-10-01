@@ -1,52 +1,24 @@
 # ==============================
-# Simulador de Máquina Norma
+# Simulador de Máquina Norma Interativo
 # ==============================
 
 import sys
 
 # ------------------------------
-# Funções para macros
+# Funções para macros monolíticas
 # ------------------------------
-def macro_multiplicacao(registradores, r1, r2, destino):
+
+def macro_mul_monolitico(r1, r2, destino, registradores):
+    """Multiplicação: destino = r1 * r2"""
     registradores[destino] = registradores[r1] * registradores[r2]
 
-def macro_divisao(registradores, r1, r2, destino):
+def macro_div_monolitico(r1, r2, destino, registradores):
+    """Divisão inteira: destino = r1 // r2"""
     if registradores[r2] == 0:
         print("Erro: divisão por zero")
         registradores[destino] = 0
     else:
         registradores[destino] = registradores[r1] // registradores[r2]
-
-def macro_primo(registradores, r, destino):
-    n = registradores[r]
-    if n < 2:
-        registradores[destino] = 0
-        return
-    for i in range(2, int(n**0.5)+1):
-        if n % i == 0:
-            registradores[destino] = 0
-            return
-    registradores[destino] = 1
-
-# ------------------------------
-# Função para carregar programa
-# ------------------------------
-def carregar_programa(nome_arquivo):
-    programa = {}
-    try:
-        with open(nome_arquivo, "r") as f:
-            for linha in f:
-                linha = linha.strip()
-                if not linha:
-                    continue
-                if ":" not in linha:
-                    continue
-                rotulo, instrucao = linha.split(":", 1)
-                programa[int(rotulo.strip())] = instrucao.strip()
-        return programa
-    except FileNotFoundError:
-        print("Arquivo não encontrado.")
-        sys.exit(1)
 
 # ------------------------------
 # Função para inicializar registradores
@@ -61,68 +33,77 @@ def inicializar_registradores():
     return registradores
 
 # ------------------------------
-# Função principal do simulador
+# Menu interativo de execução
 # ------------------------------
-def executar_programa(programa, registradores):
-    linha_atual = 1
-    print("\n=== Início da Computação ===\n")
-    while linha_atual in programa:
-        instrucao = programa[linha_atual]
-        print(f"Linha {linha_atual}: {instrucao}")
-        print(f"Registradores: {registradores}")
+def executar_interativamente(registradores):
+    print("\n=== Execução Interativa ===\n")
+    while True:
+        print(f"\nEstado atual dos registradores: {registradores}")
+        print("\nEscolha a operação a executar:")
+        print("1: Adicionar 1 a um registrador (add)")
+        print("2: Subtrair 1 de um registrador (sub)")
+        print("3: Multiplicação (macro_mul)")
+        print("4: Divisão (macro_div)")
+        print("5: Mostrar registradores")
+        print("0: Sair")
 
-        if instrucao.startswith("se zero_"):
-            # Teste zero_x
-            partes = instrucao.split()
-            reg = partes[1].split("_")[1]
-            rotulo_verdadeiro = int(partes[4])
-            rotulo_falso = int(partes[-1])
-            if registradores.get(reg, 0) == 0:
-                linha_atual = rotulo_verdadeiro
-            else:
-                linha_atual = rotulo_falso
+        opcao = input("Digite a opção: ").strip()
 
-        elif instrucao.startswith("faça add_"):
-            reg = instrucao.split()[1].split("_")[1]
-            registradores[reg] += 1
-            linha_atual = int(instrucao.split()[-1])
-
-        elif instrucao.startswith("faça sub_"):
-            reg = instrucao.split()[1].split("_")[1]
-            registradores[reg] -= 1
-            linha_atual = int(instrucao.split()[-1])
-
-        elif instrucao.startswith("macro_mul"):
-            _, r1, r2, destino = instrucao.split()
-            macro_multiplicacao(registradores, r1, r2, destino)
-            linha_atual += 1
-
-        elif instrucao.startswith("macro_div"):
-            _, r1, r2, destino = instrucao.split()
-            macro_divisao(registradores, r1, r2, destino)
-            linha_atual += 1
-
-        elif instrucao.startswith("macro_primo"):
-            _, r, destino = instrucao.split()
-            macro_primo(registradores, r, destino)
-            linha_atual += 1
-
-        else:
-            print("Instrução inválida:", instrucao)
+        if opcao == "0":
+            print("Encerrando execução.")
             break
 
-    print("\n=== Fim da Computação ===\n")
-    print("Estado final dos registradores:", registradores)
+        elif opcao == "1":
+            r = input("Registrador que deseja incrementar: ").strip()
+            if r in registradores:
+                registradores[r] += 1
+                print(f"{r} incrementado em 1.")
+            else:
+                print("Registrador inválido.")
+
+        elif opcao == "2":
+            r = input("Registrador que deseja decrementar: ").strip()
+            if r in registradores:
+                registradores[r] = max(0, registradores[r] - 1)
+                print(f"{r} decrementado em 1.")
+            else:
+                print("Registrador inválido.")
+
+        elif opcao == "3":
+            r1 = input("Registrador 1 (multiplicando): ").strip()
+            r2 = input("Registrador 2 (multiplicador): ").strip()
+            destino = input("Registrador destino: ").strip()
+            if r1 in registradores and r2 in registradores and destino in registradores:
+                macro_mul_monolitico(r1, r2, destino, registradores)
+                print(f"{destino} = {r1} * {r2}")
+            else:
+                print("Algum registrador inválido.")
+
+        elif opcao == "4":
+            r1 = input("Registrador 1 (dividendo): ").strip()
+            r2 = input("Registrador 2 (divisor): ").strip()
+            destino = input("Registrador destino: ").strip()
+            if r1 in registradores and r2 in registradores and destino in registradores:
+                macro_div_monolitico(r1, r2, destino, registradores)
+                print(f"{destino} = {r1} // {r2}")
+            else:
+                print("Algum registrador inválido.")
+
+        elif opcao == "5":
+            print("Registradores:", registradores)
+
+        else:
+            print("Opção inválida. Tente novamente.")
 
 # ------------------------------
 # Programa principal
 # ------------------------------
 def main():
-    print("=== Simulador Máquina Norma ===\n")
+    print("=== Simulador Máquina Norma Interativo ===\n")
     registradores = inicializar_registradores()
-    arquivo = input("Informe o nome do arquivo do programa: ")
-    programa = carregar_programa(arquivo)
-    executar_programa(programa, registradores)
+    executar_interativamente(registradores)
+    print("\n=== Fim da Execução ===")
+    print("Estado final dos registradores:", registradores)
 
 if __name__ == "__main__":
     main()
