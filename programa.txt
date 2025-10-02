@@ -1,0 +1,5 @@
+1: se zero_a então vá_para 5 senão vá_para 2
+2: se zero_b então vá_para 5 senão vá_para 3
+3: faça sub_a vá_para 4
+4: faça sub_b vá_para 1
+5: fim
